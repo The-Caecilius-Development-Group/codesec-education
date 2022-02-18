@@ -7,3 +7,20 @@
 * {
     font-family: 'Source Sans Pro', sans-serif;
 }
+
+body {
+    background-color: #f1e3d3;
+}
+
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 5em;
+}
+
+.pagelink {
+    font-size: 3em;
+    border-radius: 7px;
+    border-width: 0;
+    padding: 3px 10px;
+    background-color: #99c1b9;
+}
