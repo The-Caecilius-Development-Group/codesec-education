@@ -1,3 +1,6 @@
+#![allow(non_snake_case)]
+#![deny(unsafe_code)]
+
 use dioxus::prelude::*;
 mod note_input;
 
