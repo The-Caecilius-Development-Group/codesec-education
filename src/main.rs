@@ -1,3 +1,11 @@
+use dioxus::prelude::*;
+
+fn app(cx: Scope) -> Element {
+    cx.render(rsx! {
+        div {"Hello world!"}
+    })
+}
+
 fn main() {
-    println!("Hello, world!");
+    dioxus::desktop::launch(app);
 }
