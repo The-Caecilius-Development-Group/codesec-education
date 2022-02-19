@@ -2,7 +2,6 @@ use std::cell::Ref;
 
 use crate::{CurrentPage, PageLink, USER_DATA};
 use dioxus::{fermi::use_read, prelude::*};
-use std::time;
 
 #[derive(Props, PartialEq)]
 struct StudySetProps {

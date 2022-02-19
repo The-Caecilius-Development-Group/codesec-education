@@ -1,4 +1,4 @@
-use crate::{data::FlashcardSet, data::RichText, CurrentPage, PageLink, CURRENT_PAGE, USER_DATA};
+use crate::{data::FlashcardSet, data::RichText, CurrentPage, CURRENT_PAGE, USER_DATA};
 use dioxus::{
     fermi::{use_read, use_set, Atom},
     prelude::*,
@@ -94,7 +94,7 @@ pub fn InputFlashcards(cx: Scope) -> Element {
                         let set_borrow = set.borrow();
                         let name = &set_borrow.as_ref().unwrap().name;
                         // Check if a set with this name already exists
-                        if !user_data.borrow().get().sets.iter().filter(|s| &s.name == name).next().is_none() {
+                        if user_data.borrow().get().sets.iter().any(|s| &s.name == name) {
                             // little warning
                             set_warning(true);
                         } else {

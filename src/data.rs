@@ -4,7 +4,7 @@ use std::{
     io,
     ops::{Index, IndexMut},
 };
-use std::{time, time::Duration};
+use std::{time::Duration};
 
 use log::{error, info};
 use platform_dirs::AppDirs;
@@ -42,7 +42,7 @@ pub struct Flashcard {
 }
 impl Flashcard {
     /// Gets the id
-    pub fn id(&self) -> u64 {
+    pub const fn id(&self) -> u64 {
         self.id
     }
 }
@@ -59,7 +59,7 @@ pub struct FlashcardSet {
 }
 impl FlashcardSet {
     /// Creates a new, empty flashcard set
-    pub fn new(name: String) -> Self {
+    pub const fn new(name: String) -> Self {
         Self {
             name,
             flashcards: vec![],
@@ -158,7 +158,7 @@ impl UserData {
         // Get some platform-specific save dirs
         let app_dirs = AppDirs::new(Some("magistrax"), true).unwrap();
         let data_path = app_dirs.data_dir.join("user-data.json");
-        let this: UserData;
+        let this: Self;
         // Attempt to load this file
         if data_path.exists() {
             let file = File::open(data_path)?;
@@ -176,10 +176,10 @@ pub struct UserDataAccessor {
     data: UserData,
 }
 impl UserDataAccessor {
-    pub fn new(data: UserData) -> Self {
+    pub const fn new(data: UserData) -> Self {
         Self { data }
     }
-    pub fn get(&self) -> &UserData {
+    pub const fn get(&self) -> &UserData {
         &self.data
     }
     pub fn modify(&mut self, f: impl FnOnce(&mut UserData)) {

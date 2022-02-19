@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 #![deny(unsafe_code)]
+#![warn(clippy::correctness, clippy::suspicious, clippy::style, clippy::complexity, clippy::perf, clippy::nursery)]
 
 mod data;
 mod flashcards;
