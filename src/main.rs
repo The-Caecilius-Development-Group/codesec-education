@@ -3,6 +3,7 @@
 
 mod flashcards;
 mod data;
+mod note_input;
 
 use data::UserData;
 use dioxus::prelude::*;
@@ -91,8 +92,12 @@ fn App(cx: Scope) -> Element {
             CurrentPage::HomePage => rsx!(cx, HomePage {}),
             CurrentPage::Flashcards => rsx!(cx, flashcards::Flashcards {})
         }
+        note_input::input_flashcards {
+
+        }
     })
 }
+
 
 fn main() {
     // Initialising log
