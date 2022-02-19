@@ -6,21 +6,44 @@
 
 * {
     font-family: 'Source Sans Pro', sans-serif;
+    font-size: 25px;
 }
 
 body {
-    background-color: #f1e3d3;
 }
 
 h1 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 5em;
+    font-size: 3em;
 }
 
 .pagelink {
-    font-size: 3em;
+    font-size: 2em;
     border-radius: 7px;
     border-width: 0;
     padding: 3px 10px;
     background-color: #99c1b9;
+}
+
+.row-flex {
+    display: flex;
+    width: 100%;
+}
+.col-23 {
+    flex-grow: 2;
+}
+.col-13 {
+    flex-grow: 1;
+}
+.divider {
+    border-left: 5px solid black;
+    height: 100%;
+}
+
+.study-set-preview {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    height: 100px;
+    margin: 10px 5px;
 }
