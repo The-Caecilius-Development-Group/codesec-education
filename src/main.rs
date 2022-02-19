@@ -22,7 +22,7 @@ static USER_DATA: Atom<UserData> = |_| UserData::load().unwrap_or_else(|e| {
 /// Represents current page states - matched on in the main app
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
 enum CurrentPage {
-    HomePage, Flashcards
+    HomePage, Flashcards, NoteInput
 }
 
 #[derive(Props, PartialEq)]
@@ -30,7 +30,9 @@ struct PageLinkProps {
     /// Name of the button and page
     name: &'static str,
     /// What page to change to
-    redirect: CurrentPage
+    redirect: CurrentPage,
+    /// Style of this link
+    class: &'static str
 }
 /// A page link - a button to open another current page
 fn PageLink(cx: Scope<PageLinkProps>) -> Element {
@@ -38,7 +40,7 @@ fn PageLink(cx: Scope<PageLinkProps>) -> Element {
     cx.render(rsx! {
         button {
             "type": "button",
-            class: "pagelink",
+            class: "{cx.props.class}",
             onclick: move |_| {
                 set_page(cx.props.redirect);
             },
@@ -54,6 +56,7 @@ fn HomePage(cx: Scope) -> Element {
             class: "center-div",
             h1 {"Magistrax (wip name)"},
             PageLink {
+                class: "pagelink",
                 name: "Flashcards",
                 redirect: CurrentPage::Flashcards
             }
@@ -90,10 +93,8 @@ fn App(cx: Scope) -> Element {
         Font {link: "https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap"},
         match read_page {
             CurrentPage::HomePage => rsx!(cx, HomePage {}),
-            CurrentPage::Flashcards => rsx!(cx, flashcards::Flashcards {})
-        }
-        note_input::input_flashcards {
-
+            CurrentPage::Flashcards => rsx!(cx, flashcards::Flashcards {}),
+            CurrentPage::NoteInput => rsx!(cx, note_input::InputFlashcards {})
         }
     })
 }

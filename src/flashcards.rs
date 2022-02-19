@@ -1,6 +1,6 @@
 use dioxus::{prelude::*, fermi::use_read};
 
-use crate::{USER_DATA, data::FlashcardSet};
+use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink};
 
 #[derive(Props)]
 struct StudySetProps<'a> {
@@ -10,7 +10,8 @@ struct StudySetProps<'a> {
 /// Render a preview of a study set
 fn StudySet<'a>(cx: Scope<'a, StudySetProps<'a>>) -> Element<'a> {
     rsx!(cx, 
-        div {
+        button {
+            "type": "button",
             class: "study-set-preview",
             h2 {"{cx.props.set.name}"}
         }
@@ -34,9 +35,10 @@ pub fn Flashcards(cx: Scope) -> Element {
                 div {
                     class: "col-23",
                     h2 {"Your study sets"},
-                    div {
+                    PageLink {
                         class: "study-set-preview study-set-create",
-                        h2 {"Create a study set"}
+                        name: "Create a study set",
+                        redirect: CurrentPage::NoteInput
                     },
                     study_set_previews
                 },

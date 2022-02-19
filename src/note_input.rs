@@ -1,8 +1,8 @@
 use dioxus::prelude::*;
 
 
-
-pub fn input_flashcards(cx: Scope) -> Element {
+/// The flashcard note input page
+pub fn InputFlashcards(cx: Scope) -> Element {
 
     let number_of_flashcards = 0..5;
     
