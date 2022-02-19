@@ -1,20 +1,26 @@
+use std::cell::Ref;
+
 use dioxus::{prelude::*, fermi::use_read};
 use std::time;
 use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink, data::RichText};
 
 
-#[derive(Props)]
-struct StudySetProps<'a> {
+#[derive(Props, PartialEq)]
+struct StudySetProps {
     /// A reference to the flashcard set to render
-    set: &'a FlashcardSet
+    set: String
 }
 /// Render a preview of a study set
-fn StudySet<'a>(cx: Scope<'a, StudySetProps<'a>>) -> Element<'a> {
+fn StudySet(cx: Scope<StudySetProps>) -> Element {
+    let user_data = use_read(&cx, USER_DATA);
+    let sets = 
+        Ref::map(user_data.borrow(), |d| &d.sets);
+    let set = sets.iter().find(|s| s.name == cx.props.set).unwrap();
     rsx!(cx, 
         button {
             "type": "button",
             class: "study-set-preview",
-            h2 {"{cx.props.set.name}"}
+            h2 {"{set.name}"}
         }
     )
 }
@@ -58,12 +64,14 @@ pub fn Flashcards(cx: Scope) -> Element {
     }
 
     let user_data = use_read(&cx, USER_DATA);
-    // let study_set_previews: Vec<Element> = user_data.borrow().sets.iter().map(|s|
-    //     rsx!(cx, StudySet {
-    //         set: s,
-    //         key: "{s.name}"
-    //     })
-    // ).collect();
+    let sets = 
+    Ref::map(user_data.borrow(), |d| &d.sets);
+    let study_set_previews: Vec<Element> = sets.iter().map(|s|
+        cx.render(rsx!(StudySet {
+            set: s.name.clone(),
+            key: "{s.name}"
+        }))
+    ).collect();
     rsx!(cx,
         div {
             class: "center-div",
@@ -78,8 +86,8 @@ pub fn Flashcards(cx: Scope) -> Element {
                         name: "Create a study set",
                         redirect: CurrentPage::NoteInput
                     },
-                    // study_set_previews
-                },
+                    study_set_previews
+                    },
                 div {class: "divider"}
                 div {
                     class: "col-13",
