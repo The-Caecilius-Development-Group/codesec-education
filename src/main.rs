@@ -100,7 +100,7 @@ fn App(cx: Scope) -> Element {
             CurrentPage::HomePage => rsx!(cx, HomePage {}),
             CurrentPage::Flashcards => rsx!(cx, flashcards::Flashcards {}),
             CurrentPage::NoteInput => rsx!(cx, note_input::InputFlashcards {})
-        }
+        },
     })
 }
 

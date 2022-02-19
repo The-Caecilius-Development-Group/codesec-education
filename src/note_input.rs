@@ -1,8 +1,7 @@
+use dioxus::{prelude::*, fermi::{Atom, use_read, use_set}};
+use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink, data::RichText, CURRENT_PAGE};
 use std::{cell::RefCell};
 
-use dioxus::{prelude::*, fermi::{Atom, use_read, use_set}};
-
-use crate::{data::{FlashcardSet, RichText}, USER_DATA, CURRENT_PAGE, CurrentPage};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 enum CardSide {Front, Back}
@@ -59,6 +58,13 @@ pub fn InputFlashcards(cx: Scope) -> Element {
                 id: f.id(),
                 side: CardSide::Back
             },
+        }
+        div {
+            PageLink {
+                class: "home-button",
+                name: "Home",
+                redirect: CurrentPage::HomePage
+            }
         }
     ));
 

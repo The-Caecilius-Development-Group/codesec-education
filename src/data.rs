@@ -1,5 +1,5 @@
 //! Contains core data structure types used in the database
-
+use std::{time::Duration, time};
 use std::{fs::{self, File}, io, ops::{Index, IndexMut}};
 
 use log::{info, error};
@@ -82,7 +82,13 @@ impl IndexMut<u64> for FlashcardSet {
 #[derive(Serialize, Deserialize)]
 pub struct UserData {
     /// All of the user's flashcard sets
-    pub sets: Vec<FlashcardSet>
+    pub sets: Vec<FlashcardSet>,
+    
+    pub duration_since_last_visit: Duration,
+
+    pub last_visit: u64,
+
+    pub last_sys_time: Duration,
 }
 /// A defualt user data i.e empty
 impl Default for UserData {
@@ -108,7 +114,11 @@ impl Default for UserData {
         Self {
             sets: vec![
                 french, german
-            ]
+            ],
+            duration_since_last_visit: Duration::ZERO,
+            last_visit: 0,
+            last_sys_time: Duration::ZERO
+
         }
     }
 }
