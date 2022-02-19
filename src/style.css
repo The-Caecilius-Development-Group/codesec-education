@@ -67,3 +67,15 @@ h1 {
     border: 1px solid black;
     border-radius: 3px;
 }
+
+.flashcard-input-flex {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.flashcard-input {
+    width: 500px;
+    height: 100px;
+    background-color: #f2d0a9;
+}
