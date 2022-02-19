@@ -5,6 +5,8 @@ mod flashcards;
 mod data;
 mod note_input;
 
+use std::cell::RefCell;
+
 use data::UserData;
 use dioxus::desktop::tao::window::Icon;
 use dioxus::prelude::*;
@@ -15,10 +17,10 @@ use simplelog::*;
 /// An atom containing the current showed main page
 static CURRENT_PAGE: Atom<CurrentPage> = |_| CurrentPage::HomePage;
 /// An atom containing the global user data
-static USER_DATA: Atom<UserData> = |_| UserData::load().unwrap_or_else(|e| {
+static USER_DATA: Atom<RefCell<UserData>> = |_| RefCell::new(UserData::load().unwrap_or_else(|e| {
     error!("Could not load existing data: {}", e);
     UserData::default()
-});
+}));
 
 /// Represents current page states - matched on in the main app
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]

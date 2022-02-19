@@ -1,37 +1,67 @@
-use dioxus::prelude::*;
+use std::{cell::RefCell};
 
+use dioxus::{prelude::*, fermi::{use_set, Atom, use_read}};
+use log::info;
+
+use crate::{data::{FlashcardSet, RichText}};
+
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+enum CardSide {Front, Back}
+
+static ACTIVE_SET: Atom<RefCell<FlashcardSet>> = |_| RefCell::new(FlashcardSet::new("".into()));
+
+#[derive(Props, PartialEq)]
+struct FlashcardInputProps {
+    id: u64,
+    side: CardSide
+}
+fn FlashcardInput(cx: Scope<FlashcardInputProps>) -> Element {
+    let active_set = use_read(&cx, ACTIVE_SET);
+    let card = &active_set.borrow()[cx.props.id];
+    let text = match cx.props.side {
+        CardSide::Front => &card.front,
+        CardSide::Back => &card.back
+    };
+    rsx!(cx, textarea {
+        rows: "4", cols: "50",
+        style: "color: {text.color};",
+        onchange: move |env| {
+            let card = &mut active_set.borrow_mut()[cx.props.id];
+            let text = match cx.props.side {
+                CardSide::Front => &mut card.front,
+                CardSide::Back => &mut card.back
+            };
+            text.text = env.data.value.clone();
+        },
+        "{text.text}"
+    })
+}
 
 /// The flashcard note input page
 pub fn InputFlashcards(cx: Scope) -> Element {
 
-    let number_of_flashcards = 0..5;
-    
-    let flashcard_list = number_of_flashcards.map(|number| rsx!(
+    let set = use_read(&cx, ACTIVE_SET);
+    set.borrow_mut().add(RichText::empty(), RichText::empty());
+    let set_ = set.borrow();
+    let flashcard_list = set_.flashcards
+    .iter().map(|f| rsx!(cx, 
         div {
-            "class": "center-div",
-            span{
-                "Front of card {number}",
-                input {
-                    "type": "text",
-                    "id": "front-card-{number}",
-                    "class": "card-{number}"
-                }
-            }
-
-            span{
-                "Back of card {number}",
-                input {
-                    "type": "text",
-                    "id": "back-card-{number}",
-                    "class": "card-{number}"
-                }
-            }
+            class: "flashcard-input-flex",
+            FlashcardInput {
+                id: f.id(),
+                side: CardSide::Front
+            },
+            FlashcardInput {
+                id: f.id(),
+                side: CardSide::Back
+            },
         }
     ));
 
     cx.render(
         rsx!(
-            ul {
+            div {
+                class: "center-div",
                 flashcard_list
             }
         )

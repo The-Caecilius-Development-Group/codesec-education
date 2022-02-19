@@ -1,28 +1,25 @@
 //! Contains core data structure types used in the database
 
-use std::{fs::{self, File}, io};
+use std::{fs::{self, File}, io, ops::{Index, IndexMut}};
 
 use log::info;
 use platform_dirs::AppDirs;
 use serde::{Serialize, Deserialize};
 
-/// Represents formatting that can be applied to any rich text
-#[derive(Serialize, Deserialize, Copy, Clone, Debug, PartialEq, Eq)]
-pub enum RichTextFormat {
-    Bold, Italic, Underlined
+/// Rich text - user inputted text with colour (for now).
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RichText {
+    pub text: String,
+    pub color: String
 }
-
-/// A node of rich text, containing some formatting
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RichTextNode (String, Vec<RichTextFormat>);
-
-/// Rich text - user inputted text with formatting. Contains several nodes each with their own styles
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RichText (Vec<RichTextNode>);
 impl RichText {
-    /// Plain, non-formatted text
+    /// An empty black text
+    pub fn empty() -> Self {
+        Self::plaintext("".into())
+    }
+    /// Plain, non-coloured text
     pub fn plaintext(text: String) -> Self {
-        Self (vec![RichTextNode(text, vec![])])
+        Self {text, color: "#000000".into()}
     }
 }
 
@@ -36,6 +33,12 @@ pub struct Flashcard {
     /// Flashcard id (used in dioxus keys)
     id: u64
 }
+impl Flashcard {
+    /// Gets the id
+    pub fn id(&self) -> u64 {
+        self.id
+    }
+}
 
 /// A set of flashcards for easy testing
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -48,15 +51,30 @@ pub struct FlashcardSet {
     highest_id: u64
 }
 impl FlashcardSet {
+    /// Creates a new, empty flashcard set
     pub fn new(name: String) -> Self {
         Self {name, flashcards: vec![], highest_id: 0}
     }
-    pub fn add(&mut self, front: RichText, back: RichText) -> &mut Self {
-        self.flashcards.push(Flashcard {
+    /// Adds a flashcard to this set with the front and back [`RichText`]s
+    pub fn add(&mut self, front: RichText, back: RichText) -> &Flashcard {
+        let card = Flashcard {
             front, back, id: self.highest_id
-        });
+        };
+        self.flashcards.push(card);
         self.highest_id += 1;
-        self
+        self.flashcards.last().unwrap()
+    }
+}
+impl Index<u64> for FlashcardSet {
+    type Output = Flashcard;
+
+    fn index(&self, index: u64) -> &Self::Output {
+        self.flashcards.iter().filter(|f| f.id == index).next().expect("Invalid id")
+    }
+}
+impl IndexMut<u64> for FlashcardSet {
+    fn index_mut(&mut self, index: u64) -> &mut Self::Output {
+        self.flashcards.iter_mut().filter(|f| f.id == index).next().expect("Invalid id")
     }
 }
 
@@ -70,25 +88,23 @@ pub struct UserData {
 impl Default for UserData {
     fn default() -> Self {
         let mut french = FlashcardSet::new("French".into());
-        french
-            .add(
-            RichText::plaintext("I live".into()),
-            RichText::plaintext("J'habite".into())
-            )
-            .add(
+        french.add(
+        RichText::plaintext("I live".into()),
+        RichText::plaintext("J'habite".into())
+        );
+        french.add(
                 RichText::plaintext("I am".into()),
                 RichText::plaintext("Je suis".into())
             );
         let mut german = FlashcardSet::new("German".into());
-        german
-            .add(
-            RichText::plaintext("To eat".into()),
-            RichText::plaintext("Essen".into())
-            )
-            .add(
-                RichText::plaintext("Cockroach".into()),
-                RichText::plaintext("Kakerlaken".into())
-            );
+        german.add(
+        RichText::plaintext("To eat".into()),
+        RichText::plaintext("Essen".into())
+        );
+        german.add(
+            RichText::plaintext("Cockroach".into()),
+            RichText::plaintext("Kakerlaken".into())
+        );
         Self {
             sets: vec![
                 french, german

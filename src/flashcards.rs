@@ -20,12 +20,12 @@ fn StudySet<'a>(cx: Scope<'a, StudySetProps<'a>>) -> Element<'a> {
 
 pub fn Flashcards(cx: Scope) -> Element {
     let user_data = use_read(&cx, USER_DATA);
-    let study_set_previews = user_data.sets.iter().map(|s|
-        rsx!(cx, StudySet {
-            set: s,
-            key: "{s.name}"
-        })
-    );
+    // let study_set_previews: Vec<Element> = user_data.borrow().sets.iter().map(|s|
+    //     rsx!(cx, StudySet {
+    //         set: s,
+    //         key: "{s.name}"
+    //     })
+    // ).collect();
     rsx!(cx,
         div {
             class: "center-div",
@@ -40,7 +40,7 @@ pub fn Flashcards(cx: Scope) -> Element {
                         name: "Create a study set",
                         redirect: CurrentPage::NoteInput
                     },
-                    study_set_previews
+                    // study_set_previews
                 },
                 div {class: "divider"}
                 div {
