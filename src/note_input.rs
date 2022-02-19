@@ -1,11 +1,9 @@
 use dioxus::prelude::*;
-use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink};
+use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink, data::RichText};
 use std::{cell::RefCell};
 
 use dioxus::{prelude::*, fermi::{use_set, Atom, use_read}};
 use log::info;
-
-use crate::{data::{FlashcardSet, RichText}};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 enum CardSide {Front, Back}

@@ -1,6 +1,7 @@
 use dioxus::{prelude::*, fermi::use_read};
 use std::time;
-use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink};
+use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink, data::RichText};
+
 
 #[derive(Props)]
 struct StudySetProps<'a> {
@@ -19,8 +20,7 @@ fn StudySet<'a>(cx: Scope<'a, StudySetProps<'a>>) -> Element<'a> {
 }
 
 pub fn Flashcards(cx: Scope) -> Element {
-<<<<<<< HEAD
-    let user_data = use_read(&cx, USER_DATA).borrow_mut();
+    let mut user_data = use_read(&cx, USER_DATA).borrow_mut();
     let study_set_previews = user_data.sets.iter().map(|s|
         rsx!(cx, StudySet {
             set: s,
@@ -32,12 +32,31 @@ pub fn Flashcards(cx: Scope) -> Element {
         println!("Duration is zero!");
     }
 
-    if user_data.last_visit == 0 {
-        user_data.last_visit = time::SystemTime::now();
+    if user_data.last_visit == 0 {               
+        match time::SystemTime::now().duration_since(time::UNIX_EPOCH) {
+            Ok(n) => {
+                user_data.last_visit = n.as_secs();
+                user_data.last_sys_time = n;
+            },
+            Err(_) => panic!("SystemTime before UNIX EPOCH!"),
+        }
         println!("{}", user_data.last_visit); 
     }
 
-=======
+    // let time_since_last_visit = time::SystemTime::now.duration_since(time::UNIX_EPOCH).as_secs() - user_data.last_visit; 
+
+    let sys_time = time::SystemTime::now().duration_since(time::UNIX_EPOCH);
+    let mut time_since_last_visit: u64 = 0; 
+
+    match sys_time {
+        Ok(n) => {time_since_last_visit = n.as_secs() - user_data.last_visit; user_data.last_visit = n.as_secs(); user_data.last_sys_time = n;}
+        Err(e) => println!("{:?}", e)
+    }
+
+    if  time_since_last_visit != 0 {
+        println!("{time_since_last_visit} seconds since last visit");
+    }
+
     let user_data = use_read(&cx, USER_DATA);
     // let study_set_previews: Vec<Element> = user_data.borrow().sets.iter().map(|s|
     //     rsx!(cx, StudySet {
@@ -45,7 +64,6 @@ pub fn Flashcards(cx: Scope) -> Element {
     //         key: "{s.name}"
     //     })
     // ).collect();
->>>>>>> fe5b1809b0a9945bbbd0b4178aedb5858d03d113
     rsx!(cx,
         div {
             class: "center-div",

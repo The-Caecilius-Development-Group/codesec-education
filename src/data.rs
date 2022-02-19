@@ -1,11 +1,6 @@
 //! Contains core data structure types used in the database
-
-<<<<<<< HEAD
-use std::{fs::{self, File}, io};
-use std::time::Duration;
-=======
+use std::{time::Duration, time};
 use std::{fs::{self, File}, io, ops::{Index, IndexMut}};
->>>>>>> fe5b1809b0a9945bbbd0b4178aedb5858d03d113
 
 use log::info;
 use platform_dirs::AppDirs;
@@ -91,9 +86,9 @@ pub struct UserData {
     
     pub duration_since_last_visit: Duration,
 
-    pub last_visit: u32,
+    pub last_visit: u64,
 
-    pub current_time: u32,
+    pub last_sys_time: Duration,
 }
 /// A defualt user data i.e empty
 impl Default for UserData {
@@ -122,7 +117,7 @@ impl Default for UserData {
             ],
             duration_since_last_visit: Duration::ZERO,
             last_visit: 0,
-            current_time: 0
+            last_sys_time: Duration::ZERO
 
         }
     }
