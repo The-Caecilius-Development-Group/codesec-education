@@ -1,10 +1,12 @@
 #![allow(non_snake_case)]
 #![deny(unsafe_code)]
 #![warn(clippy::correctness, clippy::suspicious, clippy::style, clippy::complexity, clippy::perf, clippy::nursery)]
+#![feature(once_cell)]
 
 mod data;
 mod flashcards;
 mod note_input;
+mod study;
 
 use std::cell::RefCell;
 
@@ -14,6 +16,7 @@ use dioxus::fermi::{use_read, use_set, Atom};
 use dioxus::prelude::*;
 use log::error;
 use simplelog::*;
+use study::FlashcardTesterProps;
 
 /// An atom containing the current showed main page
 static CURRENT_PAGE: Atom<CurrentPage> = |_| CurrentPage::HomePage;
@@ -28,11 +31,13 @@ static USER_DATA: Atom<RefCell<UserDataAccessor>> = |_| {
 };
 
 /// Represents current page states - matched on in the main app
-#[derive(PartialEq, Eq, Debug, Clone, Copy)]
+#[derive(PartialEq, Debug, Clone)]
 enum CurrentPage {
     HomePage,
     Flashcards,
     NoteInput,
+    StudySetup,
+    FlashcardTester (FlashcardTesterProps)
 }
 
 #[derive(Props, PartialEq)]
@@ -52,7 +57,7 @@ fn PageLink(cx: Scope<PageLinkProps>) -> Element {
             "type": "button",
             class: "{cx.props.class}",
             onclick: move |_| {
-                set_page(cx.props.redirect);
+                set_page(cx.props.redirect.clone());
             },
             "{cx.props.name}"
         }
@@ -64,7 +69,12 @@ fn HomePage(cx: Scope) -> Element {
     cx.render(rsx! {
         div {
             class: "center-div",
-            h1 {"Magistrax (wip name)"},
+            h1 {"Magistrax"},
+            PageLink {
+                class: "pagelink",
+                name: "Study",
+                redirect: CurrentPage::StudySetup
+            }
             PageLink {
                 class: "pagelink",
                 name: "Flashcards",
@@ -109,7 +119,9 @@ fn App(cx: Scope) -> Element {
         match read_page {
             CurrentPage::HomePage => rsx!(cx, HomePage {}),
             CurrentPage::Flashcards => rsx!(cx, flashcards::Flashcards {}),
-            CurrentPage::NoteInput => rsx!(cx, note_input::InputFlashcards {})
+            CurrentPage::NoteInput => rsx!(cx, note_input::InputFlashcards {}),
+            CurrentPage::StudySetup => rsx!(cx, study::Study {}),
+            CurrentPage::FlashcardTester(props) => rsx!(cx, study::FlashcardTester {..props.clone()})
         },
         div {
             PageLink {

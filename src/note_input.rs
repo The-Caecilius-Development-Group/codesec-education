@@ -98,6 +98,7 @@ pub fn InputFlashcards(cx: Scope) -> Element {
                             // little warning
                             set_warning(true);
                         } else {
+                            drop(set_borrow);
                             // It doesn't - success
                             user_data.borrow_mut().modify(|d| d.sets.push(
                                 set.borrow_mut().take().unwrap()
