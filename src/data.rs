@@ -69,12 +69,12 @@ impl Index<u64> for FlashcardSet {
     type Output = Flashcard;
 
     fn index(&self, index: u64) -> &Self::Output {
-        self.flashcards.iter().filter(|f| f.id == index).next().expect("Invalid id")
+        self.flashcards.iter().find(|f| f.id == index).expect("Invalid id")
     }
 }
 impl IndexMut<u64> for FlashcardSet {
     fn index_mut(&mut self, index: u64) -> &mut Self::Output {
-        self.flashcards.iter_mut().filter(|f| f.id == index).next().expect("Invalid id")
+        self.flashcards.iter_mut().find(|f| f.id == index).expect("Invalid id")
     }
 }
 

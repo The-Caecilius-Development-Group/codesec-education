@@ -1,7 +1,6 @@
 use std::{cell::RefCell};
 
-use dioxus::{prelude::*, fermi::{use_set, Atom, use_read}};
-use log::info;
+use dioxus::{prelude::*, fermi::{Atom, use_read}};
 
 use crate::{data::{FlashcardSet, RichText}};
 
