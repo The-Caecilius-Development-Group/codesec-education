@@ -6,6 +6,7 @@ mod data;
 mod note_input;
 
 use data::UserData;
+use dioxus::desktop::tao::window::Icon;
 use dioxus::prelude::*;
 use dioxus::fermi::{Atom, use_set, use_read};
 use log::error;
@@ -103,6 +104,13 @@ fn App(cx: Scope) -> Element {
 fn main() {
     // Initialising log
     SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
+    // Icon
+    let icon_bytes = include_bytes!("../assets/magistrax-logos_black.png");
+    let decoder = png::Decoder::new(icon_bytes as &[u8]);
+    let mut reader = decoder.read_info().unwrap();
+    let mut buf = vec![0; reader.output_buffer_size()];
+    let icon = reader.next_frame(&mut buf).unwrap();
+
     // Launch the app!
     dioxus::desktop::launch_cfg(App, |c|
         // Some configuration
@@ -110,5 +118,6 @@ fn main() {
             w.with_title("Magistrax")
                 .with_maximized(true)
         )
+        .with_icon(Icon::from_rgba(buf, icon.width, icon.height).unwrap())
     );
 }
