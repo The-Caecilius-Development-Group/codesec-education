@@ -32,7 +32,9 @@ pub struct Flashcard {
     /// Text on the front of the flashcard
     pub front: RichText,
     /// Text on the back of the flashcard
-    pub back: RichText
+    pub back: RichText,
+    /// Flashcard id (used in dioxus keys)
+    id: u64
 }
 
 /// A set of flashcards for easy testing
@@ -41,7 +43,21 @@ pub struct FlashcardSet {
     /// Unique name of this set
     pub name: String,
     /// All the flashcards contained in this set
-    pub flashcards: Vec<Flashcard>
+    pub flashcards: Vec<Flashcard>,
+    /// Highest id (for adding cards)
+    highest_id: u64
+}
+impl FlashcardSet {
+    pub fn new(name: String) -> Self {
+        Self {name, flashcards: vec![], highest_id: 0}
+    }
+    pub fn add(&mut self, front: RichText, back: RichText) -> &mut Self {
+        self.flashcards.push(Flashcard {
+            front, back, id: self.highest_id
+        });
+        self.highest_id += 1;
+        self
+    }
 }
 
 /// All the user's save data
@@ -53,34 +69,31 @@ pub struct UserData {
 /// A defualt user data i.e empty
 impl Default for UserData {
     fn default() -> Self {
-        Self { sets: vec![
-            FlashcardSet {
-                name: "French".into(),
-                flashcards: vec![
-                    Flashcard {
-                        front: RichText::plaintext("I live".into()),
-                        back: RichText::plaintext("J'habite".into())
-                    },
-                    Flashcard {
-                        front: RichText::plaintext("I am".into()),
-                        back: RichText::plaintext("Je suis".into())
-                    },
-                ]
-            },
-            FlashcardSet {
-                name: "German".into(),
-                flashcards: vec![
-                    Flashcard {
-                        front: RichText::plaintext("To eat".into()),
-                        back: RichText::plaintext("essen".into())
-                    },
-                    Flashcard {
-                        front: RichText::plaintext("Cockroach".into()),
-                        back: RichText::plaintext("Kakerlaken".into())
-                    },
-                ]
-            },
-        ] }
+        let mut french = FlashcardSet::new("French".into());
+        french
+            .add(
+            RichText::plaintext("I live".into()),
+            RichText::plaintext("J'habite".into())
+            )
+            .add(
+                RichText::plaintext("I am".into()),
+                RichText::plaintext("Je suis".into())
+            );
+        let mut german = FlashcardSet::new("German".into());
+        german
+            .add(
+            RichText::plaintext("To eat".into()),
+            RichText::plaintext("Essen".into())
+            )
+            .add(
+                RichText::plaintext("Cockroach".into()),
+                RichText::plaintext("Kakerlaken".into())
+            );
+        Self {
+            sets: vec![
+                french, german
+            ]
+        }
     }
 }
 impl UserData {
