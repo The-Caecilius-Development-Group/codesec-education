@@ -7,7 +7,7 @@ mod note_input;
 
 use std::cell::RefCell;
 
-use data::UserData;
+use data::{UserData, UserDataAccessor};
 use dioxus::desktop::tao::window::Icon;
 use dioxus::prelude::*;
 use dioxus::fermi::{Atom, use_set, use_read};
@@ -17,10 +17,12 @@ use simplelog::*;
 /// An atom containing the current showed main page
 static CURRENT_PAGE: Atom<CurrentPage> = |_| CurrentPage::HomePage;
 /// An atom containing the global user data
-static USER_DATA: Atom<RefCell<UserData>> = |_| RefCell::new(UserData::load().unwrap_or_else(|e| {
-    error!("Could not load existing data: {}", e);
-    UserData::default()
-}));
+static USER_DATA: Atom<RefCell<UserDataAccessor>> = |_| RefCell::new(UserDataAccessor::new(
+    UserData::load().unwrap_or_else(|e| {
+        error!("Could not load existing data: {}", e);
+        UserData::default()
+    }
+)));
 
 /// Represents current page states - matched on in the main app
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]

@@ -2,7 +2,7 @@
 
 use std::{fs::{self, File}, io, ops::{Index, IndexMut}};
 
-use log::info;
+use log::{info, error};
 use platform_dirs::AppDirs;
 use serde::{Serialize, Deserialize};
 
@@ -142,5 +142,24 @@ impl UserData {
             this.save()?;
         }
         Ok (this)
+    }
+}
+
+/// Encapsulates [`UserData`] to ensure it is saved after modification.
+pub struct UserDataAccessor {
+    data: UserData
+}
+impl UserDataAccessor {
+    pub fn new(data: UserData) -> Self {
+        Self {data}
+    }
+    pub fn get(&self) -> &UserData {
+        &self.data
+    }
+    pub fn modify(&mut self, f: impl FnOnce(&mut UserData)) {
+        f(&mut self.data);
+        if let Err(e) = self.data.save() {
+            error!("Could not save data: {}", e);
+        }
     }
 }

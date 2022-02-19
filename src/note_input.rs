@@ -1,13 +1,13 @@
 use std::{cell::RefCell};
 
-use dioxus::{prelude::*, fermi::{Atom, use_read}};
+use dioxus::{prelude::*, fermi::{Atom, use_read, use_set}};
 
-use crate::{data::{FlashcardSet, RichText}};
+use crate::{data::{FlashcardSet, RichText}, USER_DATA, CURRENT_PAGE, CurrentPage};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 enum CardSide {Front, Back}
 
-static ACTIVE_SET: Atom<RefCell<FlashcardSet>> = |_| RefCell::new(FlashcardSet::new("".into()));
+static ACTIVE_SET: Atom<RefCell<Option<FlashcardSet>>> = |_| RefCell::new(None);
 
 #[derive(Props, PartialEq)]
 struct FlashcardInputProps {
@@ -16,7 +16,8 @@ struct FlashcardInputProps {
 }
 fn FlashcardInput(cx: Scope<FlashcardInputProps>) -> Element {
     let active_set = use_read(&cx, ACTIVE_SET);
-    let card = &active_set.borrow()[cx.props.id];
+    let set_borrow = active_set.borrow();
+    let card = &set_borrow.as_ref().unwrap()[cx.props.id];
     let text = match cx.props.side {
         CardSide::Front => &card.front,
         CardSide::Back => &card.back
@@ -25,7 +26,8 @@ fn FlashcardInput(cx: Scope<FlashcardInputProps>) -> Element {
         rows: "4", cols: "50",
         style: "color: {text.color};",
         onchange: move |env| {
-            let card = &mut active_set.borrow_mut()[cx.props.id];
+            let mut set_borrow = active_set.borrow_mut();
+            let card = &mut set_borrow.as_mut().unwrap()[cx.props.id];
             let text = match cx.props.side {
                 CardSide::Front => &mut card.front,
                 CardSide::Back => &mut card.back
@@ -38,10 +40,13 @@ fn FlashcardInput(cx: Scope<FlashcardInputProps>) -> Element {
 
 /// The flashcard note input page
 pub fn InputFlashcards(cx: Scope) -> Element {
-
     let set = use_read(&cx, ACTIVE_SET);
-    set.borrow_mut().add(RichText::empty(), RichText::empty());
-    let set_ = set.borrow();
+    if set.borrow().is_none() { // just created the component
+        *set.borrow_mut() = Some(FlashcardSet::new("".into()));
+    }
+    set.borrow_mut().as_mut().unwrap().add(RichText::empty(), RichText::empty());
+    let set_borrow = set.borrow();
+    let set_ = set_borrow.as_ref().unwrap();
     let flashcard_list = set_.flashcards
     .iter().map(|f| rsx!(cx, 
         div {
@@ -61,7 +66,23 @@ pub fn InputFlashcards(cx: Scope) -> Element {
         rsx!(
             div {
                 class: "center-div",
+                input {
+                    "type": "input",
+                    onchange: move |e| {
+                        set.borrow_mut().as_mut().unwrap().name = e.value.clone();
+                    }
+                }
                 flashcard_list
+                button {
+                    "type": "button",
+                    onclick: move |_| {
+                        use_read(&cx, USER_DATA).borrow_mut().modify(|d| d.sets.push(
+                            set.borrow_mut().take().unwrap()
+                        ));
+                        (use_set(&cx, CURRENT_PAGE))(CurrentPage::Flashcards);
+                    },
+                    "Save"
+                }
             }
         )
     )

@@ -13,7 +13,7 @@ struct StudySetProps {
 fn StudySet(cx: Scope<StudySetProps>) -> Element {
     let user_data = use_read(&cx, USER_DATA);
     let sets = 
-        Ref::map(user_data.borrow(), |d| &d.sets);
+        Ref::map(user_data.borrow(), |d| &d.get().sets);
     let set = sets.iter().find(|s| s.name == cx.props.set).unwrap();
     rsx!(cx, 
         button {
@@ -27,7 +27,7 @@ fn StudySet(cx: Scope<StudySetProps>) -> Element {
 pub fn Flashcards(cx: Scope) -> Element {
     let user_data = use_read(&cx, USER_DATA);
     let sets = 
-    Ref::map(user_data.borrow(), |d| &d.sets);
+    Ref::map(user_data.borrow(), |d| &d.get().sets);
     let study_set_previews: Vec<Element> = sets.iter().map(|s|
         cx.render(rsx!(StudySet {
             set: s.name.clone(),
