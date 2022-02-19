@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink};
 
 
 /// The flashcard note input page
@@ -24,6 +25,13 @@ pub fn InputFlashcards(cx: Scope) -> Element {
                     "type": "text",
                     "id": "back-card-{number}",
                     "class": "card-{number}"
+                }
+            }
+            div {
+                PageLink {
+                    class: "home-button",
+                    name: "Home",
+                    redirect: CurrentPage::HomePage
                 }
             }
         }

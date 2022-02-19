@@ -56,3 +56,14 @@ h1 {
     justify-content: right;
     background-color: #f2d0a9;
 }
+
+.home-button {
+    margin: 0;
+    position: absolute;
+    top: 95%;
+    left: 50%;
+    -ms-transform: translate(0%, -50%);
+    transform: translate(0%, -50%);
+    border: 1px solid black;
+    border-radius: 3px;
+}

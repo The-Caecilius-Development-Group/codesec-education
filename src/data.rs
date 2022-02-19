@@ -1,6 +1,7 @@
 //! Contains core data structure types used in the database
 
 use std::{fs::{self, File}, io};
+use std::time::Duration;
 
 use log::info;
 use platform_dirs::AppDirs;
@@ -64,7 +65,13 @@ impl FlashcardSet {
 #[derive(Serialize, Deserialize)]
 pub struct UserData {
     /// All of the user's flashcard sets
-    pub sets: Vec<FlashcardSet>
+    pub sets: Vec<FlashcardSet>,
+    
+    pub duration_since_last_visit: Duration,
+
+    pub last_visit: u32,
+
+    pub current_time: u32,
 }
 /// A defualt user data i.e empty
 impl Default for UserData {
@@ -92,7 +99,11 @@ impl Default for UserData {
         Self {
             sets: vec![
                 french, german
-            ]
+            ],
+            duration_since_last_visit: Duration::ZERO,
+            last_visit: 0,
+            current_time: 0
+
         }
     }
 }

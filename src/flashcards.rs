@@ -1,5 +1,5 @@
 use dioxus::{prelude::*, fermi::use_read};
-
+use std::time;
 use crate::{USER_DATA, data::FlashcardSet, CurrentPage, PageLink};
 
 #[derive(Props)]
@@ -19,13 +19,23 @@ fn StudySet<'a>(cx: Scope<'a, StudySetProps<'a>>) -> Element<'a> {
 }
 
 pub fn Flashcards(cx: Scope) -> Element {
-    let user_data = use_read(&cx, USER_DATA);
+    let user_data = use_read(&cx, USER_DATA).borrow_mut();
     let study_set_previews = user_data.sets.iter().map(|s|
         rsx!(cx, StudySet {
             set: s,
             key: "{s.name}"
         })
     );
+
+    if user_data.duration_since_last_visit.is_zero() {
+        println!("Duration is zero!");
+    }
+
+    if user_data.last_visit == 0 {
+        user_data.last_visit = time::SystemTime::now();
+        println!("{}", user_data.last_visit); 
+    }
+
     rsx!(cx,
         div {
             class: "center-div",
@@ -46,6 +56,12 @@ pub fn Flashcards(cx: Scope) -> Element {
                 div {
                     class: "col-13",
                     "hi"
+                }
+
+                PageLink {
+                    class: "home-button",
+                    name: "Home",
+                    redirect: CurrentPage::HomePage
                 }
             }
         }
