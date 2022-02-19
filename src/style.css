@@ -79,3 +79,7 @@ h1 {
     height: 100px;
     background-color: #f2d0a9;
 }
+
+.warning {
+    color: red;
+}

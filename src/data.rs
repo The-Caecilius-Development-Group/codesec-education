@@ -1,16 +1,20 @@
 //! Contains core data structure types used in the database
-use std::{time::Duration, time};
-use std::{fs::{self, File}, io, ops::{Index, IndexMut}};
+use std::{
+    fs::{self, File},
+    io,
+    ops::{Index, IndexMut},
+};
+use std::{time, time::Duration};
 
-use log::{info, error};
+use log::{error, info};
 use platform_dirs::AppDirs;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Rich text - user inputted text with colour (for now).
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct RichText {
     pub text: String,
-    pub color: String
+    pub color: String,
 }
 impl RichText {
     /// An empty black text
@@ -19,7 +23,10 @@ impl RichText {
     }
     /// Plain, non-coloured text
     pub fn plaintext(text: String) -> Self {
-        Self {text, color: "#000000".into()}
+        Self {
+            text,
+            color: "#000000".into(),
+        }
     }
 }
 
@@ -31,7 +38,7 @@ pub struct Flashcard {
     /// Text on the back of the flashcard
     pub back: RichText,
     /// Flashcard id (used in dioxus keys)
-    id: u64
+    id: u64,
 }
 impl Flashcard {
     /// Gets the id
@@ -48,17 +55,23 @@ pub struct FlashcardSet {
     /// All the flashcards contained in this set
     pub flashcards: Vec<Flashcard>,
     /// Highest id (for adding cards)
-    highest_id: u64
+    highest_id: u64,
 }
 impl FlashcardSet {
     /// Creates a new, empty flashcard set
     pub fn new(name: String) -> Self {
-        Self {name, flashcards: vec![], highest_id: 0}
+        Self {
+            name,
+            flashcards: vec![],
+            highest_id: 0,
+        }
     }
     /// Adds a flashcard to this set with the front and back [`RichText`]s
     pub fn add(&mut self, front: RichText, back: RichText) -> &Flashcard {
         let card = Flashcard {
-            front, back, id: self.highest_id
+            front,
+            back,
+            id: self.highest_id,
         };
         self.flashcards.push(card);
         self.highest_id += 1;
@@ -69,12 +82,18 @@ impl Index<u64> for FlashcardSet {
     type Output = Flashcard;
 
     fn index(&self, index: u64) -> &Self::Output {
-        self.flashcards.iter().find(|f| f.id == index).expect("Invalid id")
+        self.flashcards
+            .iter()
+            .find(|f| f.id == index)
+            .expect("Invalid id")
     }
 }
 impl IndexMut<u64> for FlashcardSet {
     fn index_mut(&mut self, index: u64) -> &mut Self::Output {
-        self.flashcards.iter_mut().find(|f| f.id == index).expect("Invalid id")
+        self.flashcards
+            .iter_mut()
+            .find(|f| f.id == index)
+            .expect("Invalid id")
     }
 }
 
@@ -83,7 +102,7 @@ impl IndexMut<u64> for FlashcardSet {
 pub struct UserData {
     /// All of the user's flashcard sets
     pub sets: Vec<FlashcardSet>,
-    
+
     pub duration_since_last_visit: Duration,
 
     pub last_visit: u64,
@@ -95,30 +114,27 @@ impl Default for UserData {
     fn default() -> Self {
         let mut french = FlashcardSet::new("French".into());
         french.add(
-        RichText::plaintext("I live".into()),
-        RichText::plaintext("J'habite".into())
+            RichText::plaintext("I live".into()),
+            RichText::plaintext("J'habite".into()),
         );
         french.add(
-                RichText::plaintext("I am".into()),
-                RichText::plaintext("Je suis".into())
-            );
+            RichText::plaintext("I am".into()),
+            RichText::plaintext("Je suis".into()),
+        );
         let mut german = FlashcardSet::new("German".into());
         german.add(
-        RichText::plaintext("To eat".into()),
-        RichText::plaintext("Essen".into())
+            RichText::plaintext("To eat".into()),
+            RichText::plaintext("Essen".into()),
         );
         german.add(
             RichText::plaintext("Cockroach".into()),
-            RichText::plaintext("Kakerlaken".into())
+            RichText::plaintext("Kakerlaken".into()),
         );
         Self {
-            sets: vec![
-                french, german
-            ],
+            sets: vec![french, german],
             duration_since_last_visit: Duration::ZERO,
             last_visit: 0,
-            last_sys_time: Duration::ZERO
-
+            last_sys_time: Duration::ZERO,
         }
     }
 }
@@ -151,17 +167,17 @@ impl UserData {
             this = Self::default();
             this.save()?;
         }
-        Ok (this)
+        Ok(this)
     }
 }
 
 /// Encapsulates [`UserData`] to ensure it is saved after modification.
 pub struct UserDataAccessor {
-    data: UserData
+    data: UserData,
 }
 impl UserDataAccessor {
     pub fn new(data: UserData) -> Self {
-        Self {data}
+        Self { data }
     }
     pub fn get(&self) -> &UserData {
         &self.data

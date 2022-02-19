@@ -1,33 +1,37 @@
 #![allow(non_snake_case)]
 #![deny(unsafe_code)]
 
-mod flashcards;
 mod data;
+mod flashcards;
 mod note_input;
 
 use std::cell::RefCell;
 
 use data::{UserData, UserDataAccessor};
 use dioxus::desktop::tao::window::Icon;
+use dioxus::fermi::{use_read, use_set, Atom};
 use dioxus::prelude::*;
-use dioxus::fermi::{Atom, use_set, use_read};
 use log::error;
 use simplelog::*;
 
 /// An atom containing the current showed main page
 static CURRENT_PAGE: Atom<CurrentPage> = |_| CurrentPage::HomePage;
 /// An atom containing the global user data
-static USER_DATA: Atom<RefCell<UserDataAccessor>> = |_| RefCell::new(UserDataAccessor::new(
-    UserData::load().unwrap_or_else(|e| {
-        error!("Could not load existing data: {}", e);
-        UserData::default()
-    }
-)));
+static USER_DATA: Atom<RefCell<UserDataAccessor>> = |_| {
+    RefCell::new(UserDataAccessor::new(UserData::load().unwrap_or_else(
+        |e| {
+            error!("Could not load existing data: {}", e);
+            UserData::default()
+        },
+    )))
+};
 
 /// Represents current page states - matched on in the main app
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
 enum CurrentPage {
-    HomePage, Flashcards, NoteInput
+    HomePage,
+    Flashcards,
+    NoteInput,
 }
 
 #[derive(Props, PartialEq)]
@@ -37,7 +41,7 @@ struct PageLinkProps {
     /// What page to change to
     redirect: CurrentPage,
     /// Style of this link
-    class: &'static str
+    class: &'static str,
 }
 /// A page link - a button to open another current page
 fn PageLink(cx: Scope<PageLinkProps>) -> Element {
@@ -72,19 +76,24 @@ fn HomePage(cx: Scope) -> Element {
 #[derive(Props, PartialEq)]
 struct FontProps {
     /// Link (given on fonts.google.com) to the font
-    link: &'static str
+    link: &'static str,
 }
 /// Load a font from google fonts
 fn Font(cx: Scope<FontProps>) -> Element {
-    rsx!(cx,
+    rsx!(
+        cx,
         link {
-            rel: "preconnect", href: "https://fonts.googleapis.com"
+            rel: "preconnect",
+            href: "https://fonts.googleapis.com"
         },
         link {
-            rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "true"
+            rel: "preconnect",
+            href: "https://fonts.gstatic.com",
+            crossorigin: "true"
         },
         link {
-            rel: "stylesheet", href: "{cx.props.link}"
+            rel: "stylesheet",
+            href: "{cx.props.link}"
         }
     )
 }
@@ -101,9 +110,15 @@ fn App(cx: Scope) -> Element {
             CurrentPage::Flashcards => rsx!(cx, flashcards::Flashcards {}),
             CurrentPage::NoteInput => rsx!(cx, note_input::InputFlashcards {})
         },
+        div {
+            PageLink {
+                class: "home-button",
+                name: "Home",
+                redirect: CurrentPage::HomePage
+            }
+        }
     })
 }
-
 
 fn main() {
     // Initialising log
@@ -122,6 +137,5 @@ fn main() {
             w.with_title("Magistrax")
                 .with_maximized(true)
         )
-        .with_icon(Icon::from_rgba(buf, icon.width, icon.height).unwrap())
-    );
+        .with_icon(Icon::from_rgba(buf, icon.width, icon.height).unwrap()));
 }
