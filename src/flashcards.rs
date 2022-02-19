@@ -34,6 +34,10 @@ pub fn Flashcards(cx: Scope) -> Element {
                 div {
                     class: "col-23",
                     h2 {"Your study sets"},
+                    div {
+                        class: "study-set-preview study-set-create",
+                        h2 {"Create a study set"}
+                    },
                     study_set_previews
                 },
                 div {class: "divider"}

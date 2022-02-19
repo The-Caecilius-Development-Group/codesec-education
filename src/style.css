@@ -46,4 +46,12 @@ h1 {
     padding: 10px;
     height: 100px;
     margin: 10px 5px;
+    background-color: #99c1b9;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 500px;
+}
+.study-set-preview.study-set-create {
+    justify-content: right;
 }
