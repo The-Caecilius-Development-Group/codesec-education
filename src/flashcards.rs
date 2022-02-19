@@ -24,6 +24,14 @@ fn StudySet(cx: Scope<StudySetProps>) -> Element {
     )
 }
 
+fn DeleteButton(cx: Scope) -> Element {
+    rsx!(cx, button{
+        "type": "button",
+        class: "delete-button",
+        h2 {"Delete"}
+    })
+}
+
 // fn SystemTimeComponent(cx: Scope) -> Element {
 //     let user_data_borrow = use_read(&cx, USER_DATA).borrow();
 
@@ -72,10 +80,18 @@ pub fn Flashcards(cx: Scope) -> Element {
 
     let sets = &user_data.sets;
     let study_set_previews: Vec<Element> = sets.iter().map(|s|
-        cx.render(rsx!(StudySet {
+        cx.render(rsx!(
+        div {
+        "class": "set-list-item",
+        StudySet {
             set: s.name.clone(),
             key: "{s.name}"
-        }))
+        },
+        DeleteButton {
+
+        } 
+    }
+    ))
     ).collect();
     rsx!(cx,
         div {
@@ -87,7 +103,7 @@ pub fn Flashcards(cx: Scope) -> Element {
                     class: "col-23",
                     h2 {"Your study sets"},
                     PageLink {
-                        class: "study-set-preview study-set-create",
+                        class: "set-list-item study-set-create",
                         name: "Create a study set",
                         redirect: CurrentPage::NoteInput
                     },

@@ -45,16 +45,39 @@ h1 {
     border-radius: 10px;
     padding: 10px;
     height: 100px;
-    margin: 10px 5px;
     background-color: #99c1b9;
-    display: flex;
-    align-items: center;
-    justify-content: left;
+    float: left;
     width: 500px;
+    margin: 10px 5px;
+    align-items: center;
 }
-.study-set-preview.study-set-create {
-    justify-content: right;
+.set-list-item.study-set-create {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 20px;
+    height: 100px;
+    width: 500px;
+    margin: 10px 5px;
+    align-items: center;
+    justify-content: center;
     background-color: #f2d0a9;
+}
+
+.delete-button {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    height: 100px;
+    background-color: #d88c9a;
+    width: 150px;
+    margin: 10px 5px;
+    align-items: center;
+}
+
+.set-list-item {
+    padding: 10px;
+    display: flex;
+    justify-content: left;
 }
 
 .home-button {
