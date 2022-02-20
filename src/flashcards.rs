@@ -1,21 +1,19 @@
 use std::cell::Ref;
 
-use dioxus::{prelude::*, fermi::use_read};
-use std::time;
-use crate::{USER_DATA, CurrentPage, PageLink};
+use crate::{CurrentPage, PageLink, USER_DATA};
+use dioxus::{fermi::use_read, prelude::*};
 
 #[derive(Props, PartialEq)]
 struct StudySetProps {
     /// A reference to the flashcard set to render
-    set: String
+    set: String,
 }
 /// Render a preview of a study set
 fn StudySet(cx: Scope<StudySetProps>) -> Element {
     let user_data = use_read(&cx, USER_DATA);
-    let sets = 
-        Ref::map(user_data.borrow(), |d| &d.get().sets);
+    let sets = Ref::map(user_data.borrow(), |d| &d.get().sets);
     let set = sets.iter().find(|s| s.name == cx.props.set).unwrap();
-    rsx!(cx, 
+    rsx!(cx,
         button {
             "type": "button",
             class: "study-set-preview",
@@ -39,7 +37,7 @@ fn DeleteButton(cx: Scope) -> Element {
 //         println!("Duration is zero!");
 //     }
 
-//     if user_data.last_visit == 0 {               
+//     if user_data.last_visit == 0 {
 //         match time::SystemTime::now().duration_since(time::UNIX_EPOCH) {
 //             Ok(n) => {
 //                 use_read(&cx, USER_DATA).borrow_mut().modify(|d| {
@@ -49,13 +47,13 @@ fn DeleteButton(cx: Scope) -> Element {
 //             },
 //             Err(_) => panic!("SystemTime before UNIX EPOCH!"),
 //         }
-//         println!("{}", user_data.last_visit); 
+//         println!("{}", user_data.last_visit);
 //     }
 
-//     // let time_since_last_visit = time::SystemTime::now.duration_since(time::UNIX_EPOCH).as_secs() - user_data.last_visit; 
+//     // let time_since_last_visit = time::SystemTime::now.duration_since(time::UNIX_EPOCH).as_secs() - user_data.last_visit;
 
 //     let sys_time = time::SystemTime::now().duration_since(time::UNIX_EPOCH);
-//     let mut time_since_last_visit: u64 = 0; 
+//     let mut time_since_last_visit: u64 = 0;
 
 //     match sys_time {
 //         Ok(n) => {
@@ -79,6 +77,7 @@ pub fn Flashcards(cx: Scope) -> Element {
     let user_data = user_data_borrow.get();
 
     let sets = &user_data.sets;
+<<<<<<< HEAD
     let study_set_previews: Vec<Element> = sets.iter().map(|s|
         cx.render(rsx!(
         div {
@@ -93,6 +92,17 @@ pub fn Flashcards(cx: Scope) -> Element {
     }
     ))
     ).collect();
+=======
+    let study_set_previews: Vec<Element> = sets
+        .iter()
+        .map(|s| {
+            cx.render(rsx!(StudySet {
+                set: s.name.clone(),
+                key: "{s.name}"
+            }))
+        })
+        .collect();
+>>>>>>> origin/master
     rsx!(cx,
         div {
             class: "center-div",
@@ -113,12 +123,6 @@ pub fn Flashcards(cx: Scope) -> Element {
                 div {
                     class: "col-13",
                     "hi"
-                }
-
-                PageLink {
-                    class: "home-button",
-                    name: "Home",
-                    redirect: CurrentPage::HomePage
                 }
             }
         }
