@@ -10,17 +10,37 @@ struct StudySetProps {
 }
 /// Render a preview of a study set
 fn StudySet(cx: Scope<StudySetProps>) -> Element {
+
+    /// Borrows the user data to load in all the different "sets" of flashcards
     let user_data = use_read(&cx, USER_DATA);
     let sets = Ref::map(user_data.borrow(), |d| &d.get().sets);
     let set = sets.iter().find(|s| s.name == cx.props.set).unwrap();
+
     rsx!(cx,
         button {
             "type": "button",
             class: "study-set-preview",
             h2 {"{set.name}"}
+        },
+
+        button{
+            "type": "button",
+            class: "delete-button",
+
+            // onclick: move |_| {                
+
+            //     {let index = user_data.clone().borrow_mut().get().sets.iter().position(|s| s.name == set.name).unwrap();
+
+            //     user_data.borrow_mut().modify(|d|{ d.sets.remove(index);});
+            //     }
+            // },
+            // "Save",
+            h2 {"Delete"}
         }
+
     )
 }
+
 
 // fn SystemTimeComponent(cx: Scope) -> Element {
 //     let user_data_borrow = use_read(&cx, USER_DATA).borrow();
@@ -69,15 +89,17 @@ pub fn Flashcards(cx: Scope) -> Element {
     let user_data = user_data_borrow.get();
 
     let sets = &user_data.sets;
-    let study_set_previews: Vec<Element> = sets
-        .iter()
-        .map(|s| {
-            cx.render(rsx!(StudySet {
-                set: s.name.clone(),
-                key: "{s.name}"
-            }))
-        })
-        .collect();
+    let study_set_previews: Vec<Element> = sets.iter().map(|s|
+        cx.render(rsx!(
+        div {
+        "class": "set-list-item",
+        StudySet {
+            set: s.name.clone(),
+            key: "{s.name}"
+        },
+    }
+    ))
+    ).collect();
     rsx!(cx,
         div {
             class: "center-div",
@@ -88,7 +110,7 @@ pub fn Flashcards(cx: Scope) -> Element {
                     class: "col-23",
                     h2 {"Your study sets"},
                     PageLink {
-                        class: "study-set-preview study-set-create",
+                        class: "set-list-item study-set-create",
                         name: "Create a study set",
                         redirect: CurrentPage::NoteInput
                     },
