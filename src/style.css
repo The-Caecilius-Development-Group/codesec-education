@@ -58,19 +58,10 @@ h1 {
     padding: 10px;
     height: 100px;
     background-color: #99c1b9;
-<<<<<<< HEAD
     float: left;
     width: 500px;
     margin: 10px 5px;
     align-items: center;
-=======
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    width: 161px;
-    max-width: 90vw;
-    flex-grow: 1;
->>>>>>> origin/master
 }
 .set-list-item.study-set-create {
     border: 1px solid black;
@@ -94,7 +85,7 @@ h1 {
     padding: 10px;
     height: 100px;
     background-color: #d88c9a;
-    width: 150px;
+    width: 300px;
     margin: 10px 5px;
     align-items: center;
 }
@@ -158,4 +149,9 @@ h1 {
     background-color: #f2d0a9;
     border: 1px solid black;
     border-radius: 10px;
+    margin: 10px 5px; 
+}
+
+body {
+    background-image: linear-gradient( to right,#f1e3d3, #99c1b9) ;
 }
