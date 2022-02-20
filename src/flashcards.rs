@@ -41,7 +41,10 @@ fn StudySet(cx: Scope<StudySetProps>) -> Element {
     )
 }
 
-
+/// System to track time taken to return to a page.
+/// Made as a component so we can implement it 
+/// anywhere in our code. This will be used to show users how they are doing
+/// and when they need to revise a list. 
 // fn SystemTimeComponent(cx: Scope) -> Element {
 //     let user_data_borrow = use_read(&cx, USER_DATA).borrow();
 
