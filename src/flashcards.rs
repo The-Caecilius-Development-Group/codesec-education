@@ -11,7 +11,6 @@ struct StudySetProps {
 /// Render a preview of a study set
 fn StudySet(cx: Scope<StudySetProps>) -> Element {
 
-    /// Borrows the user data to load in all the different "sets" of flashcards
     let user_data = use_read(&cx, USER_DATA);
     let sets = Ref::map(user_data.borrow(), |d| &d.get().sets);
     let set = sets.iter().find(|s| s.name == cx.props.set).unwrap();
